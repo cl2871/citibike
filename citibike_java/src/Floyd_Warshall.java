@@ -16,7 +16,7 @@ public class Floyd_Warshall {
 	
 	public static void main(String[] args) throws FileNotFoundException{
 		Scanner file = new Scanner(new File("JC_edges.csv"));
-		PrintStream out = new PrintStream("distances_java.csv");
+		PrintStream out = new PrintStream("JC_distances_java.csv");
 		
 		//threads = Integer.parseInt(args[0]);
 		
@@ -54,9 +54,15 @@ public class Floyd_Warshall {
 		
 		run_floyd_warshall_path_reconstruction();
 		
+		Set<Integer> start_stations = distances.keySet();
 		
-		System.out.println(distances.get(3183).get(3201));
-		System.out.println(Arrays.toString(build_shortest_path(3183, 3201).toArray()));
+		for (Integer start_station : start_stations){
+			Set<Integer> end_stations = distances.get(start_station).keySet();
+			for (Integer end_station : end_stations){
+				float distance = distances.get(start_station).get(end_station);
+				out.println(start_station + "," + end_station + "," + distance);
+			}
+		}
 		
 		final long endTime = System.currentTimeMillis();
 		System.out.println("Total execution time: " + (endTime - startTime) );

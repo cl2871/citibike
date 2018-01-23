@@ -30,7 +30,7 @@ class Trip:
 
 def read_trips_csv(c):
 
-    file_name = '201709-citibike-tripdata.csv'
+    file_name = 'JC-201709-citibike-tripdata.csv'
     stations = {}
     trips = []
     edges = {}
@@ -75,15 +75,17 @@ def read_trips_csv(c):
             t = (trip.duration, trip.start_time, trip.end_time, trip.start_station_id, trip.end_station_id)
             c.execute('INSERT INTO trips VALUES (?,?,?,?,?)', t)
 
-        c.execute('SELECT start_station_id, end_station_id, COUNT(duration) as num_trips, AVG(duration) as trip_avg '
-                  'FROM trips GROUP BY start_station_id, end_station_id')
-        for row in c.fetchall():
-            start_station_id = row[0]
-            end_station_id = row[1]
-            if start_station_id not in edges:
-                edges[start_station_id] = {}
-            if start_station_id in edges:
-                edges[start_station_id][end_station_id] = row[3]
+        with open('JC_edges.csv', 'w') as edge_file:
+            c.execute('SELECT start_station_id, end_station_id, COUNT(duration) as num_trips, AVG(duration) as trip_avg '
+                      'FROM trips GROUP BY start_station_id, end_station_id')
+            for row in c.fetchall():
+                start_station_id = row[0]
+                end_station_id = row[1]
+                if start_station_id not in edges:
+                    edges[start_station_id] = {}
+                if start_station_id in edges:
+                    edges[start_station_id][end_station_id] = row[3]
+                    edge_file.write(str(start_station_id) + ',' + str(end_station_id) + ',' + str(row[3]) + '\n')
 
         distances = {}
         next_vertex = {}
@@ -107,7 +109,7 @@ def read_trips_csv(c):
         print(c.fetchone())
         """
 
-    with open('distances.csv', 'w') as w:
+    with open('JC_distances.csv', 'w') as w:
         c.execute(
             'SELECT * FROM distances ')
         for item in c.fetchall():
@@ -190,7 +192,7 @@ def initialize(c):
 
 def main():
     # initialize connection
-    conn = sqlite3.connect('citibike.db')
+    conn = sqlite3.connect('JC_citibike.db')
     c = conn.cursor()
 
     initialize(c)

@@ -103,3 +103,6 @@ venv.bak/
 
 ### CSV Files ###
 *.csv
+
+### tripdata data files ###
+/tripdata

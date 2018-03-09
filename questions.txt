@@ -1,0 +1,23 @@
+note: may need to utilize external data sources; e.g. a weather dataset
+
+Usual Questions
+
+Whats the correlation between Citibike usage and weather (rain, snow, temp)?
+What are the most frequently used stations?
+What are some trends based on rider demographics data?
+
+Other Questions
+
+Where to place vending machines?
+What stations are typically empty? What stations are typically full?
+Where can we add solar panel covers?
+What are the economic savings to a regular user?
+How many calories would an average user burn?
+What are the profit margins on operating Citibike? Are they bleeding money from relatively low annual pricing and high use rate by annual riders?
+What is the minimum average trip time for a user to go to a given boba shop using Citibike?
+
+Hard Questions (may require machine learning skills that I don't have)
+
+Can we predict which stations would be empty or full at a particular time of day?
+Can we predict usage based on MTA outages? 
+Is Citibike an effective alternative to MTA in certain areas?

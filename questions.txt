@@ -8,6 +8,7 @@ What are some trends based on rider demographics data?
 
 Other Questions
 
+How is usage during national holidays?
 Where to place vending machines?
 What stations are typically empty? What stations are typically full?
 Where can we add solar panel covers?

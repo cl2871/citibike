@@ -43,6 +43,35 @@ def retrieve_citibike_data():
                                    target + date_format + ".csv.zip")
             #print(str(year) + "-" + str(month) + " done")
 
+
+def retrieve_citibike_jc_data():
+
+    # same as retrieve_citibike_data() but for Jersey City data
+
+    target = r"C:\Users\Chris\Desktop\Code_Practice\citibike\tripdata\zip\citibike_tripdata_jc_"
+
+    # trip data from September of 2015 to December of 2017
+    for year in range(2015, 2018):
+        for month in range(1, 13):
+
+            if year == 2015 and month < 9:
+                continue
+
+            date_format = str(year) + '{:02d}'.format(month)
+
+            # retrieve data from citibike's s3 buckets and store in zip directory
+            # note: JC-201708 is missing a dash
+            if year == 2017 and month == 8:
+                urllib.request.urlretrieve(
+                    "https://s3.amazonaws.com/tripdata/JC-" + date_format + " citibike-tripdata.csv.zip",
+                    target + date_format + ".csv.zip")
+            else:
+                urllib.request.urlretrieve(
+                    "https://s3.amazonaws.com/tripdata/JC-" + date_format + "-citibike-tripdata.csv.zip",
+                    target + date_format + ".csv.zip")
+            print(str(year) + "-" + str(month) + " done")
+
+
 def unzip_citibike_data():
 
     zip_dir = r"C:\Users\Chris\Desktop\Code_Practice\citibike\tripdata\zip\\"
@@ -62,4 +91,5 @@ def unzip_citibike_data():
 
 
 if __name__ == "__main__":
+    #retrieve_citibike_jc_data()
     unzip_citibike_data()

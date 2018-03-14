@@ -6,15 +6,16 @@ The purpose of this project is primarily for me to experiment with big data tool
 
 ## Data Gathering and Setup
 
-I decided to use the Google Cloud Platform as my platform of choice for working with Citibike trip data. A nice feature about GCP was that they were already hosting a public dataset for Citibike trips from July 2017 (earliest reporting) to September 2016. To expand on this, I pulled newer data (including Jersey City data) from the [Citibike S3 bucket](https://s3.amazonaws.com/tripdata/index.html) and uploaded it onto Google Cloud Storage. Afterwards, I made a dataset from the csv files to run queries on them with using Google BigQuery.
+I decided to use the Google Cloud Platform as my platform of choice for working with Citibike trip data. A nice feature about GCP was that they were already hosting a public dataset for Citibike trips from July 2013 (earliest reporting) to September 2016. To expand on this, I pulled newer data (including Jersey City data) from the [Citibike S3 bucket](https://s3.amazonaws.com/tripdata/index.html) and uploaded it onto Google Cloud Storage. Afterwards, I made a dataset from the csv files to run queries on them using Google BigQuery.
 
 ### Pulling Data
 
 I pulled zip files and unzipped them using [get_tripdata.py](get_tripdata.py). Afterwards, I uploaded the csv files to my personal bucket.
 
-Note: Citibike's trip data has some inconsistencies
+Notes:
 - 2015 data has inconsistencies such as with the timestamp format; luckily Google has handled this in their public dataset
 - 10/2016 to 03/2017 has some null values for usertype
+- Google's public dataset changed gender from int values to string representation (unknown, male, female) 
 
 ## Jupyter Notebook Setup
 
@@ -24,6 +25,10 @@ Google offers Apache Spark clusters through its Dataproc service, and I utilize 
 
 The SDK provides command line access to Google's services.
 
+```
+gcloud init
+```
+
 ### Create Dataproc Cluster
 
 A cluster called datascience will be spun up using the below code. It will have Jupyter Notebook installed.
@@ -32,7 +37,7 @@ A cluster called datascience will be spun up using the below code. It will have 
 gcloud dataproc clusters create datascience --initialization-actions gs://dataproc-initialization-actions/jupyter/jupyter.sh
 ```
 
-You could do the same thing on the [user interface](https://cloud.google.com/dataproc/docs/guides/create-cluster#using_the_console_name) but remember to add the jupyter path under initialization actions
+You could do the same thing on the [user interface](https://cloud.google.com/dataproc/docs/guides/create-cluster#using_the_console_name) but remember to add the jupyter path under initialization actions.
 
 ### [SSH Tunneling and SOCKS](https://cloud.google.com/dataproc/docs/concepts/accessing/cluster-web-interfaces)
 
@@ -48,7 +53,7 @@ Notes:
 - use name of MASTER node (e.g. datascience-m for datascience)
 - need Putty for Windows
 
-SOCKS Policy:
+SOCKS Proxy Session:
 
 ```
 "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --proxy-server="socks5://localhost:1080" --host-resolver-rules="MAP * 0.0.0.0 , EXCLUDE localhost" --user-data-dir=/tmp/master-host-name
@@ -72,7 +77,7 @@ Install libraries:
 
 ### Cleanup
 
-Save the notebook and download it when finished. Run the below script to shut down the cluster to save money. 
+Save the notebook and download it when finished. Run the below command to shut down the cluster to save money. 
 
 ```
 gcloud dataproc clusters delete datascience
@@ -83,3 +88,7 @@ gcloud dataproc clusters delete datascience
 [Citibike.ipynb](Citibike.ipynb)
 
 to be continued...
+
+## Helpful Resources
+
+https://github.com/phelps-sg/python-bigdata/blob/master/README.md

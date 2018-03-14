@@ -22,3 +22,7 @@ Hard Questions (may require machine learning skills that I don't have)
 Can we predict which stations would be empty or full at a particular time of day?
 Can we predict usage based on MTA outages? 
 Is Citibike an effective alternative to MTA in certain areas?
+
+Further Research:
+
+https://wagner.nyu.edu/files/faculty/publications/CitiBikeUsage_Mar2017.pdf

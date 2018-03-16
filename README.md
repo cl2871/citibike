@@ -85,10 +85,16 @@ gcloud dataproc clusters delete datascience
 
 ## Analysis
 
-[Citibike.ipynb](Citibike.ipynb)
+[Citibike.ipynb](notebooks/Citibike.ipynb)
 
 to be continued...
 
 ## Helpful Resources
 
 https://github.com/phelps-sg/python-bigdata/blob/master/README.md
+
+## Other (to be fixed)
+
+https://data.cityofnewyork.us/City-Government/2010-Census-Tracts/fxpq-c8ku/data
+http://data.jerseycitynj.gov/dataset/jersey-city-census-tract-polygon
+https://www.census.gov/geo/maps-data/data/cbf/cbf_tracts.html

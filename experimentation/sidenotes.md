@@ -62,3 +62,11 @@ WITH
 SELECT start_station.cartodb_id, r.shape as the_geom, r.length, r.duration
 FROM start_station, end_station, cdb_route_point_to_point(origin.the_geom, destiny.the_geom, 'car') r 
 ```
+
+
+## Weather 
+
+https://www.climate.gov/maps-data/dataset/past-weather-zip-code-data-table
+
+station:
+"USW00014732","LA GUARDIA AIRPORT, NY US","40.7792","-73.88"

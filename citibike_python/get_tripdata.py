@@ -9,7 +9,7 @@ def retrieve_gz_data():
 
     target = r"C:\Users\Chris\Desktop\Code_Practice\citibike\tripdata\gz\tripdata"
 
-    # trip data from launch in July 2013 to September 2016 via Google
+    # trip data from July 2013 to September 2016 via Google
     for i in range(35):
         form = '{:012d}'.format(i)
 

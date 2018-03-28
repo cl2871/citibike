@@ -1,6 +1,6 @@
 # Data Issues and Other Notes
 
-## Citibike Data Issues
+## Citibike Trip Data Issues
 
 Below are some issues present in the Citibike trip data files.
 
@@ -43,6 +43,20 @@ At least within the 2017 trip data, there are some stations that have fairly unu
 There are 8 days with no available trip data.
 
 - '2016-01-23', '2016-01-24', '2016-01-25', '2016-01-26', '2017-02-09', '2017-03-14', '2017-03-15', '2017-03-16'
+
+## Citibike Ridership and Membership Data Issues
+
+### Undefined Data
+
+Below dates have spacing instead of commas, leading to "undefined" values. Manual fix: spacing is replaced with commas and "undefined" values are deleted.
+- 12/25/2014, 12/27/2014, 12/29/2014
+
+Below date appears to have values for annual membership and 24-hour passes combined. Manual fix: insert comma between 147199 and 4256 and delete "undefined".
+- 9/19/2015
+
+### 3-Day and 7-Day Passes
+
+Citibike switches from offering 7-day passes to 3-day passes. 5/18/2016 is the last day that 3-day passes are offered.
 
 ## Google Public Dataset
 

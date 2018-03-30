@@ -12,6 +12,7 @@ def aggregate_data():
     #   9/19/2015 annual membership and 24-passes values appear combined, manually fixed
     #   certain dates have outages (reporting 0's)
     #   last day of 7-day pass is 5/18/16
+    #   2013 Q4 (10/2013 to 12/2013) file is missing 7-day pass information
 
     input_dir = "../data/ridership_membership_data/"
     output_path = "../data/workspace/citibike_ridership_membership_data.csv"
@@ -34,7 +35,7 @@ def aggregate_data():
 
                     # different months have different formats
                     if item[:4] in ["2013", "2014"]:
-                        writable = [row[0], row[1], row[3], row[5], row[7], 0, row[7]]
+                        writable = [row[0], row[1], row[3], row[5], row[7], 0, row[8]]
                     elif item[:4] == "2015" or item[:6] == "201601":
                         writable = [row[0], row[1], row[3], row[5], row[6], 0, row[7]]
                     elif item[:6] == "201604":
@@ -45,6 +46,9 @@ def aggregate_data():
                         writable = [row[0], row[1], row[2], row[3], row[4], row[5], 0]
 
                     writer.writerow(writable)
+
+def update_argument():
+    pass
 
 if __name__ == "__main__":
     aggregate_data()

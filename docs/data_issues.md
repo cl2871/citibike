@@ -46,6 +46,10 @@ There are 8 days with no available trip data.
 
 ## Citibike Ridership and Membership Data Issues
 
+### 2013 Q4 Missing 7-Day Passes
+
+For 2013 Q4 (10/2013 to 12/2013), the data for 7-day passes is missing.
+
 ### Undefined Data
 
 Below dates have spacing instead of commas, leading to "undefined" values. Manual fix: spacing is replaced with commas and "undefined" values are deleted.

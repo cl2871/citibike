@@ -67,6 +67,7 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
+
 def main():
     """Adds pdf files to Google Drive folder and downloads their text representations.
 
@@ -89,35 +90,43 @@ def main():
     folder_id = file.get('id')
     print('Found file: {0} ({1})'.format(file.get('name'), folder_id))
 
-    # upload pdf file to folder and convert to google doc
-    # below code based off of https://developers.google.com/drive/v3/web/manage-uploads
+    reports_dir = "../data/operating_reports/pdf_files/"
+    dest_dir = "../data/operating_reports/text_files/"
 
-    file_metadata = {
-        'name': 'Test File',
-        'mimeType': 'application/vnd.google-apps.document',
-        'parents': [folder_id]
-    }
-    media = MediaFileUpload('../data/operating_reports/2013_12_December.pdf',
-                            mimetype='application/pdf')
-    file = drive_service.files().create(body=file_metadata,
-                                        media_body=media,
-                                        fields='id').execute()
-    file_id = file.get('id')
-    print('File ID: {0}'.format(file_id))
+    # convert each pdf file in reports_dir to a txt file
+    for item in os.listdir(reports_dir):
 
-    # download converted google doc as text file
-    # below code based off of https://developers.google.com/drive/v3/web/manage-downloads
-    # https://stackoverflow.com/questions/36173356/google-drive-api-download-files-python-no-files-downloaded
+        file_path = reports_dir + item
+        file_name = item[:-4]
 
-    request = drive_service.files().export_media(fileId=file_id, mimeType='text/plain')
-    fh = FileIO('../data/operating_reports/test_file.txt', 'wb')
-    downloader = MediaIoBaseDownload(fh, request)
-    done = False
-    while done is False:
-        status, done = downloader.next_chunk()
-        print("Download %d%%." % int(status.progress() * 100))
+        # upload pdf file to folder and convert to google doc
+        # below code based off of https://developers.google.com/drive/v3/web/manage-uploads
 
-    print('DONE')
+        file_metadata = {
+            'name': file_name,
+            'mimeType': 'application/vnd.google-apps.document',
+            'parents': [folder_id]
+        }
+        media = MediaFileUpload(file_path, mimetype='application/pdf')
+        file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        file_id = file.get('id')
+        print('File ID: {0}'.format(file_id))
+
+        # download converted google doc as text file
+        # below code based off of https://developers.google.com/drive/v3/web/manage-downloads
+        # https://stackoverflow.com/questions/36173356/google-drive-api-download-files-python-no-files-downloaded
+
+        file_dest = dest_dir + file_name + ".txt"
+
+        request = drive_service.files().export_media(fileId=file_id, mimeType='text/plain')
+        fh = FileIO(file_dest, 'wb')
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+            print("Download %d%%." % int(status.progress() * 100))
+
+    print('Files Successfully Converted')
 
 if __name__ == '__main__':
     main()

@@ -71,17 +71,19 @@ def get_credentials():
 def main():
     """Adds pdf files to Google Drive folder and downloads their text representations.
 
+    Pdf files will be uploaded and automatically converted to Google Docs.
+    They will then be downloaded as txt files.
+
     Returns:
         Nothing, local folder will be populated with text files
     """
 
     # authorize access and create Google Drive API service object
-
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     drive_service = discovery.build('drive', 'v3', http=http)
 
-    # retrieve the file ID of a folder called Operating_Reports
+    # retrieve the file ID of a folder called Operating_Reports (manually created)
     # below code based off of https://developers.google.com/drive/v3/web/search-parameters
 
     response = drive_service.files().list(q="name='Operating_Reports'", spaces='drive',

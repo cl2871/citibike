@@ -10,9 +10,11 @@ def collect_data_from_operating_reports():
 
     Will generate a csv with the following information (header then data):
         date        stations    bicycles    miles
-        (YYYY-MM)   (int)       (int)       (float)
+        (YYYY-MM-DD)   (int)       (int)       (float)
 
-    NOTE: Missing information will be represented as "NULL"
+    NOTES:
+        - Missing information will be represented as "NULL"
+        - date will arbitrarily have a day of 1 to ensure date data type (YYYY-MM-01)
 
     Returns:
          Nothing
@@ -39,7 +41,7 @@ def collect_data_from_operating_reports():
                 # date_format_a example:            2017_01_January
                 # date_format_standard example:     2017-01
                 date_format_a = str(year) + "_" + '{:02d}'.format(month) + "_" + calendar.month_name[month]
-                date_format_standard = str(year) + "-" + '{:02d}'.format(month)
+                date_format_standard = str(year) + "-" + '{:02d}'.format(month) + "-" + "01"
                 file_name = target + date_format_a + ".txt"
 
                 # extract data and write content

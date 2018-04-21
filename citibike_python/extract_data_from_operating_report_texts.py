@@ -8,8 +8,8 @@ def collect_data_from_operating_reports():
 
     """Collects data from operating report text files
 
-    Will generate a csv with the following information (header then data):
-        date        stations    bicycles    miles
+    Will generate a csv with the following row data for each month (includes header):
+        date            stations    bicycles    miles
         (YYYY-MM-DD)   (int)       (int)       (float)
 
     NOTES:
@@ -53,7 +53,7 @@ def collect_data_from_operating_reports():
 
 def extract_text_contents(file_name):
 
-    """Extracts data from operating report text files
+    """Extracts data from a specified operating report text file
 
     Will return an array with the following information:
         stations    bicycles    miles

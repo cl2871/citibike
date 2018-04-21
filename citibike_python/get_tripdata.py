@@ -4,28 +4,49 @@ import urllib.request
 import os
 import zipfile
 
+"""Downloads Citibike trip data as zip files then unzips them.
+
+Downloads NY trip data for October 2016 to December 2017 and NJ trip data for September 2015 to December 2017.
+The function retrieve_gz_data() is not utilized but is included below for downloading Google gzip files for 
+July 2013 to September 2016.
+"""
+
 
 def retrieve_gz_data():
 
-    target = r"C:\Users\Chris\Desktop\Code_Practice\citibike\tripdata\gz\tripdata"
+    """Retrieves trip data from Google's public dataset as gzip files.
 
-    # trip data from July 2013 to September 2016 via Google
+    Downloads trip data from July 2013 to September 2016
+
+    To extract gz file, use the following command in the directory:
+    gunzip -k *.gz;
+
+    Returns:
+        Nothing
+    """
+
+    target = "../tripdata/gz/tripdata"
+
     for i in range(35):
         form = '{:012d}'.format(i)
 
         # retrieve data from bucket and store in directory
         urllib.request.urlretrieve("https://storage.googleapis.com/citibike_tripdata/tripdata" + form + ".gz",
-                           target + form + ".gz")
-
-    # to extract gz file, use the following in directory:
-    # gunzip -k *.gz;
+                                   target + form + ".gz")
 
 
 def retrieve_citibike_data():
 
-    target = r"C:\Users\Chris\Desktop\Code_Practice\citibike\tripdata\zip\citibike_tripdata_"
+    """Retrieves trip data from Citibike's S3 buckets as zip files.
 
-    # trip data from October of 2016 to December of 2017
+    Downloads trip data from October 2016 to December 2017
+
+    Returns:
+        Nothing
+    """
+
+    target = "../tripdata/zip/citibike_tripdata_"
+
     for year in range(2016, 2018):
         for month in range(1, 13):
 
@@ -36,21 +57,23 @@ def retrieve_citibike_data():
 
             # retrieve data from citibike's s3 buckets and store in zip directory
             if year < 2017:
-                urllib.request.urlretrieve("https://s3.amazonaws.com/tripdata/" + date_format + "-citibike-tripdata.zip",
-                                   target + date_format + ".zip")
+                urllib.request.urlretrieve("https://s3.amazonaws.com/tripdata/" + date_format +
+                                           "-citibike-tripdata.zip", target + date_format + ".zip")
             else:
-                urllib.request.urlretrieve("https://s3.amazonaws.com/tripdata/" + date_format + "-citibike-tripdata.csv.zip",
-                                   target + date_format + ".csv.zip")
-            #print(str(year) + "-" + str(month) + " done")
+                urllib.request.urlretrieve("https://s3.amazonaws.com/tripdata/" + date_format +
+                                           "-citibike-tripdata.csv.zip", target + date_format + ".csv.zip")
+            print(str(year) + "-" + str(month) + " done")
 
 
 def retrieve_citibike_jc_data():
 
-    # same as retrieve_citibike_data() but for Jersey City data
+    """Does same thing as retrieve_citibike_data() but for Jersey City data
 
-    target = r"C:\Users\Chris\Desktop\Code_Practice\citibike\tripdata\zip\citibike_tripdata_jc_"
+    Downloads trip data from September 2015 to December 2017.
+    """
 
-    # trip data from September of 2015 to December of 2017
+    target = "/tripdata/zip/citibike_tripdata_jc_"
+
     for year in range(2015, 2018):
         for month in range(1, 13):
 
@@ -74,8 +97,14 @@ def retrieve_citibike_jc_data():
 
 def unzip_citibike_data():
 
-    zip_dir = r"C:\Users\Chris\Desktop\Code_Practice\citibike\tripdata\zip\\"
-    csv_dir = r"C:\Users\Chris\Desktop\Code_Practice\citibike\tripdata\csv\\"
+    """Unzips Citibike zip files for both NY and JC.
+
+    Returns:
+        Nothing
+    """
+
+    zip_dir = "../tripdata/zip/"
+    csv_dir = "../tripdata/csv/"
     extension = ".zip"
 
     # for each zip file in zip_dir extract data to csv_dir
@@ -86,10 +115,11 @@ def unzip_citibike_data():
             file_name = zip_dir + item
             with zipfile.ZipFile(file_name, "r") as zip_ref:
                 zip_ref.extractall(csv_dir)
-                #print(item + " done")
-                # os.remove(file_name)
+                print(item + " done")
+                #os.remove(file_name)
 
 
 if __name__ == "__main__":
-    #retrieve_citibike_jc_data()
+    retrieve_citibike_data()
+    retrieve_citibike_jc_data()
     unzip_citibike_data()

@@ -20,7 +20,7 @@ def clean_weather_data():
 
             # skip header row
             next(reader, None)
-            writer.writerow(['date', 'avg_wind_speed', 'precipitation', 'snowfall', 'snow_depth','avg_temperature'])
+            writer.writerow(['date', 'avg_wind_speed', 'precipitation', 'snowfall', 'snow_depth', 'avg_temperature'])
 
             for row in reader:
 

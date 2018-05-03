@@ -4,6 +4,7 @@ import os
 from time import time
 import heapq
 import itertools
+from multiprocessing import Pool, Manager
 
 
 class PopFromEmptyQueueError(KeyError):
@@ -11,7 +12,6 @@ class PopFromEmptyQueueError(KeyError):
 
 
 class PriorityQueue:
-
     """Implementation of a priority queue using heapq. Acts like a min-heap.
 
     Most code borrowed from below:
@@ -23,10 +23,10 @@ class PriorityQueue:
 
     def __init__(self):
         self.queue = []
-        heapq.heapify(self.queue)               # make into a heap
-        self.entry_finder = {}                  # dict for finding an element's entry in priority queue
-        self.counter = itertools.count()        # counter for priority tie-breaking
-        self.REMOVED = "removed"                # for marking an element as removed
+        heapq.heapify(self.queue)  # make into a heap
+        self.entry_finder = {}  # dict for finding an element's entry in priority queue
+        self.counter = itertools.count()  # counter for priority tie-breaking
+        self.REMOVED = "removed"  # for marking an element as removed
 
     def add_element(self, element, priority):
 
@@ -122,17 +122,45 @@ def dijkstra_min_heap(vertices, source_distances, edges, prev, source):
             raise
 
 
-def get_shortest_paths():
+def run_dijkstra(distances, prev_station, source, stations, edges):
 
+    """Runs dijkstra on provided source and updates the distances and prev_station dicts.
+
+    Distances and prev_stations are dicts shared between processes.
+
+    Returns:
+        Nothing
+    """
+
+    # initialization
+    station_distances = {}
+    prev = {}
+
+    # dijkstra
+    dijkstra_min_heap(stations, station_distances, edges, prev, source)
+
+    # update dicts with new entries
+    distances[source] = station_distances
+    prev_station[source] = prev
+
+
+def get_shortest_paths():
     """Generates a csv file containing the shortest paths between Citibike stations.
 
     Runs dijkstra on all Citibike stations. Dijkstra is better than Floyd-Warshall since the graph is sparse.
     The edges (average time between stations) are guaranteed to be positive (Citibike trip data only contains trips with
         at minimum 60 seconds of travel time).
 
+    Notes:
+    to run parallel code properly in Jupyter notebook, put functions in their own python file and import those functions
+    https://stackoverflow.com/questions/47313732/jupyter-notebook-never-finishes-processing-using-multiprocessing
+        -python-3/47374811#47374811
+
     Returns:
         Nothing
     """
+
+    # ---- Query ----
 
     # aggregate data for trips in 2017 with durations <= hour and group by route (start station - end station)
     routes_query = """
@@ -152,7 +180,9 @@ def get_shortest_paths():
 
     # execute query on Google BigQuery and store in routes DataFrame
     project_id = os.environ['project_id']
-    routes = gbq.read_gbq(query=routes_query, dialect ='legacy', project_id=project_id)
+    routes = gbq.read_gbq(query=routes_query, dialect='legacy', project_id=project_id)
+
+    # ---- Data Cleaning ----
 
     # include routes that have significant # of trips and avg trip times <= 30 mins
     usable_routes = routes.loc[(routes['num_trip'] > 5) & (routes['avg_trip'] <= 1800)]
@@ -170,20 +200,30 @@ def get_shortest_paths():
     print('Stations:', len(stations))
 
     """
+    ---- All Pairs Shortest Paths Notes----
+    
     edges will be a dict of dict for avg travel times from usable_routes
         e.g.    edges[72][83] will give distance from station 72 to 83
     distances will be a dict of dict for best avg travel times
         e.g.    distances[72][83] will give distance from station 72 to station 82
     prev_station will be a dict of dict
         e.g.    prev_station[72][83] will give the next station from 83 to 72 
-        
+
     each iteration of dijkstra will update distances and prev_station by adding new dicts for each source vertex
         distances[source] = source_distances
         prev_station[source] = prev
+        
+    Manager is an object that controls a server process for supporting shared states. The distances and prev_station
+    dicts are shared amongst processes. Since each process only adds entries for stations they are assigned, there
+    will be no race conditions/conflicts.
+    https://docs.python.org/3/library/multiprocessing.html
     """
 
-    distances = {}
-    prev_station = {}
+    # ---- Setup ----
+
+    manager = Manager()
+    distances = manager.dict()
+    prev_station = manager.dict()
 
     # put usable_routes avg trip durations into edges
     edges = {}
@@ -195,22 +235,22 @@ def get_shortest_paths():
         # make an inner dict if needed
         if start_station_id not in edges:
             edges[start_station_id] = {}
-
         edges[start_station_id][end_station_id] = row['avg_trip']
 
     print("---- Starting Dijkstra APSP ----")
 
     start_time = time()
-    for station in stations:
-        station_distances = {}
-        prev = {}
-        dijkstra_min_heap(stations, station_distances, edges, prev, station)
-        distances[station] = station_distances
-        prev_station[station] = prev
-        #print("Station", station, "done")
-    print("Algorithm Time: ", time() - start_time)
 
+    pool = Pool(2)
+    for source in stations:
+        pool.apply_async(run_dijkstra, args=(distances, prev_station, source, stations, edges))
+    pool.close()
+    pool.join()
+
+    print("Algorithm Time: ", time() - start_time)
     print('Stations:', len(distances), 'Routes:', len(distances) ** 2)
+
+    # ---- Generate CSV File
 
     shortest_paths_list = []
 

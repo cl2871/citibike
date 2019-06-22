@@ -24,15 +24,21 @@ import requests
 
 def get_zip_codes():
 
-    # grabs postal codes for each station via Google geocoding API by latitude and longitude
-    # number of unknown postal codes after pulling data is small (1 entry), can manually look up
+    """Generates a csv file that maps zip code to station data.
 
-    # see below for example json response
-    # https://developers.google.com/maps/documentation/geocoding/intro#reverse-example
+    Grabs postal codes for each station via Google's geocoding API by latitude and longitude.
+    The number of unknown postal codes after pulling data is small (1 entry); can manually look up.
+
+    See below for an example json response
+    https://developers.google.com/maps/documentation/geocoding/intro#reverse-example
+
+    Returns:
+        Nothing
+    """
 
     key = os.environ["Google_API"]
-    input_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\citibike_stations.csv"
-    output_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\citibike_stations_zipcodes.csv"
+    input_path = "../data/workspace/citibike_stations.csv"
+    output_path = "../data/workspace/citibike_stations_zipcodes.csv"
 
     with open(input_path, "r") as stations_file:
         with open(output_path, "w", newline='') as output_file:
@@ -54,6 +60,7 @@ def get_zip_codes():
                 longitude = row[4]
                 capacity = row[7]
 
+                # TODO: ignore testing stations (stations related to 8D Technologies)
                 # if latitude and longitude are not 0 (station available)
                 if float(latitude) and float(longitude):
 
@@ -80,7 +87,10 @@ def get_zip_codes():
 
 def read_income_path_zip_code(path, hashmap):
 
-    # map income to a zipcode key
+    """Reads in income data from file and maps income for each zip code.
+
+    Key: zip code, Value: income
+    """
 
     with open(path, "r") as income_file:
         reader = csv.reader(income_file)
@@ -97,24 +107,31 @@ def read_income_path_zip_code(path, hashmap):
 
 def collect_median_income_by_zip_code():
 
-    # match median income data to zip code of each station (data denormalization)
+    """Generates a csv file that maps median income to station data by zip code.
 
-    # https://factfinder.census.gov/
-    # https://www.reddit.com/r/datasets/comments/3lfttu/recent_median_household_income_by_us_zip_code/
+    References
+    https://factfinder.census.gov/
+    https://www.reddit.com/r/datasets/comments/3lfttu/recent_median_household_income_by_us_zip_code/
 
-    # advanced search > geographies > 5 digit zip code tabulation area > new york (and new jersey) > add to selections
-    # table B19013 > 2016 ACS 5-year estimates > download (use), uncheck merge annotations and data into same file
+    Steps for downloading median income data using Census Bureau website:
+    advanced search > geographies > 5 digit zip code tabulation area > new york (and new jersey) > add to selections
+    table B19013 > 2016 ACS 5-year estimates > download (use), uncheck merge annotations and data into same file
+
+    Returns:
+        Nothing
+    """
 
     # map for zip code to median income
     hashmap = dict()
 
     # renamed the unzipped folders (NY and NJ)
-    income_ny_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\ACS_16_5YR_B19013_NY\ACS_16_5YR_B19013.csv"
-    income_nj_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\ACS_16_5YR_B19013_NJ\ACS_16_5YR_B19013.csv"
+    income_ny_path = "../data/income_data/ACS_16_5YR_B19013_NY/ACS_16_5YR_B19013.csv"
+    income_nj_path = "../data/income_data/ACS_16_5YR_B19013_NJ/ACS_16_5YR_B19013.csv"
 
-    input_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\citibike_stations_zipcodes.csv"
-    output_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\citibike_stations_and_income.csv"
+    input_path = "../data/workspace/citibike_stations_zipcodes.csv"
+    output_path = "../data/workspace/citibike_stations_and_income.csv"
 
+    # populate hashmap with zip code keys and income values
     read_income_path_zip_code(income_ny_path, hashmap)
     read_income_path_zip_code(income_nj_path, hashmap)
 
@@ -144,15 +161,21 @@ def collect_median_income_by_zip_code():
 
 def get_census_tracts():
 
-    # grabs census tract for each station via the FCC's geo API by latitude and longitude
-    # https://geo.fcc.gov/api/census/
+    """Generates a csv file that maps zip code to station data.
 
-    # NOTE: block_fips is a unique identifier for a census block (has state, county, tract, and block ids)
-    # e.g. 360470543001000  ->  36      047         054300      1000
-    #                           ^ state ^ county    ^ tract     ^ block
+    Grabs the census tract for each station via the FCC's geo API by latitude and longitude.
+    https://geo.fcc.gov/api/census/
 
-    input_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\citibike_stations.csv"
-    output_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\citibike_stations_census_tracts.csv"
+    NOTE: block_fips is a unique identifier for a census block (has state, county, tract, and block ids)
+    e.g. 360470543001000  ->  36      047         054300      1000
+                              ^ state ^ county    ^ tract     ^ block
+
+    Returns:
+        Nothing
+    """
+
+    input_path = "../data/workspace/citibike_stations.csv"
+    output_path = "../data/workspace/citibike_stations_census_tracts.csv"
 
     with open(input_path, "r") as stations_file:
         with open(output_path, "w", newline='') as output_file:
@@ -201,7 +224,10 @@ def get_census_tracts():
 
 def read_income_path_census_tract(path, hashmap):
 
-    # map income to a census tract key
+    """Reads in income data from file and maps income for each census tract.
+
+    Key: census tract, Value: income
+    """
 
     with open(path, "r") as income_file:
         reader = csv.reader(income_file)
@@ -218,21 +244,25 @@ def read_income_path_census_tract(path, hashmap):
 
 def collect_median_income_by_census_tract():
 
-    # match median income data to census tract id of each station (data denormalization)
+    """Generates a csv file that maps median income to station data by census tract.
 
-    # https://factfinder.census.gov/
-    # advanced search > geographies > census tract > new york (and new jersey) > all census tracts > add to selections
-    # table B19013 > 2016 ACS 5-year estimates > download (use), uncheck merge annotations and data into same file
+    https://factfinder.census.gov/
+
+    Steps for downloading median income data using Census Bureau website:
+    advanced search > geographies > census tract > new york (and new jersey) > all census tracts > add to selections
+    table B19013 > 2016 ACS 5-year estimates > download (use), uncheck merge annotations and data into same file
+
+    Returns:
+        Nothing
+    """
 
     # map for census tract to median income
     hashmap = dict()
 
     # renamed the unzipped folder for census tract
-    income_census_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\ACS_16_5YR_B19013_Census_Tract" \
-                     r"\ACS_16_5YR_B19013.csv"
-
-    input_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\citibike_stations_census_tracts.csv"
-    output_path = r"C:\Users\Chris\Desktop\Code_Practice\citibike\citibike_stations_census_tracts_and_income.csv"
+    income_census_path = "../data/income_data/ACS_16_5YR_B19013_Census_Tract/ACS_16_5YR_B19013.csv"
+    input_path = "../data/workspace/citibike_stations_census_tracts.csv"
+    output_path = "../data/workspace/citibike_stations_census_tracts_and_income.csv"
 
     read_income_path_census_tract(income_census_path, hashmap)
 
@@ -260,8 +290,6 @@ def collect_median_income_by_census_tract():
                 writer.writerow([row[0], row[1], row[2], row[3], census_tract, income, capacity])
 
 
-
 if __name__ == "__main__":
     get_census_tracts()
     collect_median_income_by_census_tract()
-

@@ -36,7 +36,7 @@ GROUP BY start_station_id, start_station_name ORDER BY num_trip DESC
 
 ### Unusual Stations
 
-At least within the 2017 trip data, there are some stations that have fairly unusual locations (latitude and longitude outside expected operational area). These stations have names starting with "8D" and are assumed to be testing stations for [8D Technologies](https://www.motivateco.com/bike-share-leaders-motivate-and-8d-technologies-announce-merger/). I have ignored these in my start stations map. 
+At least within the 2017 trip data, there are some stations that have fairly unusual locations (latitude and longitude outside expected operational area). Some of these stations have names starting with "8D" and are assumed to be testing stations for [8D Technologies](https://www.motivateco.com/bike-share-leaders-motivate-and-8d-technologies-announce-merger/). Additionally, some stations have the value 0.0 for their latitudes and/or longitudes. I generally ignore these stations in my analysis. 
 
 ### Dates With No Trip Data
 

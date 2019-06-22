@@ -33,6 +33,7 @@ def aggregate_data():
 
                 for row in reader:
 
+                    # TODO: need to find data for 2013 Q4 for 7-day passes or write 0's, current code will break
                     # different months have different formats
                     if item[:4] in ["2013", "2014"]:
                         writable = [row[0], row[1], row[3], row[5], row[7], 0, row[8]]
@@ -47,8 +48,6 @@ def aggregate_data():
 
                     writer.writerow(writable)
 
-def update_argument():
-    pass
 
 if __name__ == "__main__":
     aggregate_data()

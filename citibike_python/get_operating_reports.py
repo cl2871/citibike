@@ -43,7 +43,7 @@ def retrieve_operating_reports():
             if year == 2014 and month == 4:
                 urllib.request.urlretrieve("https://d21xlh2maitm24.cloudfront.net/nyc/" +
                                            "April-2014-Citi-Bike-Monthly-Report_FINAL.pdf",
-                                            target + date_format_a + ".pdf")
+                                           target + date_format_a + ".pdf")
 
             elif year == 2016 and month in [4, 5, 7, 8, 9]:
                 # special case, need to manually download, see above
@@ -51,7 +51,7 @@ def retrieve_operating_reports():
 
             elif year < 2016 or year == 2016 and month <= 5:
                 urllib.request.urlretrieve("https://s3.amazonaws.com/citibike-regunits/pdf/" + date_format_a
-                                       + "_Citi_Bike_Monthly_Report.pdf", target + date_format_a + ".pdf")
+                                           + "_Citi_Bike_Monthly_Report.pdf", target + date_format_a + ".pdf")
 
             else:
                 urllib.request.urlretrieve("https://d21xlh2maitm24.cloudfront.net/nyc/" + date_format_b +
